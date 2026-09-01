@@ -1,0 +1,25 @@
+[project]
+name = "who-knows"
+version = "0.1.0"
+description = "Tonight's game board: Steam, PS5, and Switch."
+readme = "README.md"
+authors = [
+    { name = "XiaoZ-0218", email = "xiao.z.218@qq.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+who-knows = "who_knows.server:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
