@@ -47,12 +47,20 @@ main {
   gap: 16px;
 }
 
-.brand {
+.brand,
+.brand:link,
+.brand:visited,
+.brand:hover,
+.brand:active {
   display: flex;
   align-items: center;
   gap: 14px;
-  color: inherit;
+  color: var(--ink);
   text-decoration: none;
+}
+
+.brand h1 {
+  color: var(--ink);
 }
 
 .logo {
@@ -79,11 +87,22 @@ h1 {
 
 .status {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   font-family: ui-sans-serif, "PingFang SC", sans-serif;
   font-size: 12px;
   color: var(--muted);
+  text-align: right;
+  max-width: 240px;
+}
+
+.status .updated {
+  color: var(--ink);
+}
+
+.status .fail {
+  color: var(--bad);
 }
 
 .dot {

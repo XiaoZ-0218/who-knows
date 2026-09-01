@@ -141,23 +141,50 @@ function escapeHtml(text) {
     .replaceAll(">", "&gt;");
 }
 
+function updatedLabel(status) {
+  let latest = 0;
+  for (const item of Object.values(status || {})) {
+    const stamp = Date.parse(item.fetched_at || "");
+    if (!Number.isNaN(stamp) && stamp > latest) latest = stamp;
+  }
+  if (!latest) return "还没更新过";
+  const minutes = Math.max(0, Math.round((Date.now() - latest) / 60000));
+  if (minutes < 1) return "刚刚更新";
+  if (minutes < 60) return minutes + " 分钟前更新";
+  const hours = Math.round(minutes / 60);
+  if (hours < 48) return hours + " 小时前更新";
+  return Math.round(hours / 24) + " 天前更新";
+}
+
+function failedStores(status) {
+  return Object.entries(status || {}).filter(([, item]) => item && item.ok === false);
+}
+
+function platformChips(payload) {
+  const known = new Set(PLATFORMS.map(([value]) => value));
+  const extra = [];
+  for (const key of Object.keys(payload.status || {})) {
+    if (!known.has(key)) extra.push([key, PLATFORM_LABELS[key] || key]);
+  }
+  return PLATFORMS.concat(extra);
+}
+
 function renderStatus(status, fx) {
   const node = $("status");
   node.innerHTML = "";
-  const order = ["steam", "ps5", "switch", "apple-cn", "apple-us", "epic", "gog"];
-  const keys = [
-    ...order.filter((key) => key in status),
-    ...Object.keys(status).filter((key) => !order.includes(key)),
-  ];
-  for (const key of keys) {
-    const item = status[key] || {};
-    const row = document.createElement("div");
-    row.innerHTML = `<span class="dot ${item.ok ? "ok" : "bad"}"></span>${PLATFORM_LABELS[key] || key} ${item.ok ? "在刷新" : item.error ? "这轮失败" : "还没拉到"}`;
-    node.appendChild(row);
-  }
+  const updated = document.createElement("div");
+  updated.className = "updated";
+  updated.textContent = updatedLabel(status);
+  node.appendChild(updated);
   if (fx && (fx.USD || fx.EUR)) {
     const row = document.createElement("div");
     row.textContent = `汇率 USD ${Number(fx.USD || 0).toFixed(2)} · EUR ${Number(fx.EUR || 0).toFixed(2)}`;
+    node.appendChild(row);
+  }
+  for (const [key, item] of failedStores(status)) {
+    const row = document.createElement("div");
+    row.className = "fail";
+    row.textContent = (PLATFORM_LABELS[key] || key) + " 刷新失败";
     node.appendChild(row);
   }
 }
@@ -174,7 +201,7 @@ async function load() {
     state.mood = value;
     load();
   });
-  renderChips($("platforms"), PLATFORMS, state.platform, (value) => {
+  renderChips($("platforms"), platformChips(payload), state.platform, (value) => {
     state.platform = value;
     load();
   });
