@@ -47,6 +47,13 @@ crontab -e
 - 域名：`game.zxclaw.top`
 - 服务：`http://127.0.0.1:18765`
 
+NAS 拉 Steam 需要走局域网代理。在仓库目录放一个不进 git 的 `.env`：
+
+```
+HTTP_PROXY=http://192.168.1.100:7890
+HTTPS_PROXY=http://192.168.1.100:7890
+```
+
 环境变量：
 
 - `WHO_KNOWS_PORT` 默认 `8765`

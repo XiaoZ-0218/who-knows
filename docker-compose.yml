@@ -8,6 +8,12 @@ services:
       WHO_KNOWS_DATA: /data/catalog.json
       WHO_KNOWS_PORT: "8765"
       WHO_KNOWS_REFRESH: "1800"
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      http_proxy: ${HTTP_PROXY:-}
+      https_proxy: ${HTTPS_PROXY:-}
+      NO_PROXY: localhost,127.0.0.1
+      no_proxy: localhost,127.0.0.1
     volumes:
       - board-data:/data
     restart: unless-stopped
