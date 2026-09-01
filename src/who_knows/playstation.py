@@ -76,6 +76,7 @@ def parse_playstation(raw: dict, fetched_at: str = "") -> list[dict]:
                 original_price=original,
                 discount=discount,
                 store_url=f"https://store.playstation.com/en-us/product/{store_id}",
+                currency="USD",
                 fetched_at=fetched_at,
             )
         )

@@ -119,6 +119,7 @@ def make_game(
     original_price: float | None = None,
     discount: float | None = None,
     store_url: str = "",
+    currency: str = "USD",
     fetched_at: str = "",
     now: datetime | None = None,
 ) -> dict:
@@ -141,6 +142,7 @@ def make_game(
         "original_price": original_price,
         "discount": float(discount or 0),
         "store_url": store_url,
+        "currency": currency or "USD",
         "fetched_at": fetched_at,
         "mood": mood_scores(float(rating or 0), float(popularity or 0), iso_date, now=now),
     }

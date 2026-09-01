@@ -1,7 +1,7 @@
 from who_knows.catalog import merge_platform
 
 
-def refresh_catalog(old: dict, fetchers: dict, fetched_at: str) -> dict:
+def refresh_catalog(old: dict, fetchers: dict, fetched_at: str, fx: dict | None = None) -> dict:
     games = list(old.get("games") or [])
     status = dict(old.get("status") or {})
     for platform, fetcher in fetchers.items():
@@ -22,4 +22,4 @@ def refresh_catalog(old: dict, fetchers: dict, fetched_at: str) -> dict:
                 "fetched_at": previous.get("fetched_at", ""),
                 "error": str(exc),
             }
-    return {"games": games, "status": status}
+    return {"games": games, "status": status, "fx": fx if fx is not None else (old.get("fx") or {})}

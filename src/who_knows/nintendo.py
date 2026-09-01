@@ -82,6 +82,7 @@ def parse_nintendo(raw: dict, fetched_at: str = "") -> list[dict]:
                 original_price=original,
                 discount=doc.get("price_discount_percentage_f") or 0,
                 store_url=store_url,
+                currency="EUR",
                 fetched_at=fetched_at,
             )
         )

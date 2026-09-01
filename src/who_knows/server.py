@@ -8,6 +8,7 @@ import time
 
 from who_knows.cache import read_catalog, write_catalog
 from who_knows.catalog import board_payload
+from who_knows.fx import fetch_fx
 from who_knows.nintendo import fetch_nintendo
 from who_knows.playstation import fetch_playstation
 from who_knows.refresh import refresh_catalog
@@ -44,7 +45,11 @@ class Board:
         fetched_at = datetime.now(timezone.utc).isoformat()
         with self.lock:
             old = read_catalog(self.path)
-        payload = refresh_catalog(old, self.fetchers, fetched_at)
+        try:
+            fx = fetch_fx()
+        except Exception:
+            fx = old.get("fx") or {}
+        payload = refresh_catalog(old, self.fetchers, fetched_at, fx=fx)
         with self.lock:
             write_catalog(self.path, payload)
         return payload

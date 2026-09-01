@@ -69,6 +69,7 @@ def parse_steam(featured: dict, details: dict, fetched_at: str = "") -> list[dic
                 original_price=original,
                 discount=discount,
                 store_url=f"https://store.steampowered.com/app/{appid}",
+                currency="USD",
                 fetched_at=fetched_at,
             )
         )

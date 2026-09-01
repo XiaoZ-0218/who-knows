@@ -1,3 +1,7 @@
+from who_knows.fx import to_cny
+from who_knows.social import discussion_links
+
+
 def merge_platform(old: list[dict], platform: str, fresh: list[dict]) -> list[dict]:
     kept = [item for item in old if item.get("platform") != platform]
     return kept + list(fresh)
@@ -40,12 +44,29 @@ def board_payload(
     players = players or None
     mood = mood or "hot"
     games = catalog.get("games") or []
-    filtered = filter_games(games, platform=platform, genre=genre, players=players, mood=mood)
-    deal_pool = filter_games(games, platform=platform, genre=genre, players=players, mood="hot")
+    fx = catalog.get("fx") or {}
+    filtered = [
+        present_game(item, fx)
+        for item in filter_games(games, platform=platform, genre=genre, players=players, mood=mood)
+    ]
+    deal_pool = [
+        present_game(item, fx)
+        for item in deals(filter_games(games, platform=platform, genre=genre, players=players, mood="hot"))[:12]
+    ]
     genres = sorted({g for item in games for g in item.get("genres") or []})
     return {
         "games": filtered,
-        "deals": deals(deal_pool)[:12],
+        "deals": deal_pool,
         "status": catalog.get("status") or {},
         "genres": genres,
+        "fx": fx,
     }
+
+
+def present_game(game: dict, fx: dict) -> dict:
+    item = dict(game)
+    currency = item.get("currency") or "USD"
+    item["price_cny"] = to_cny(item.get("price"), currency, fx)
+    item["original_price_cny"] = to_cny(item.get("original_price"), currency, fx)
+    item["links"] = discussion_links(item)
+    return item

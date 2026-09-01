@@ -63,35 +63,58 @@ function money(value) {
   return "$" + Number(value).toFixed(2);
 }
 
+function moneyCny(value) {
+  if (value === null || value === undefined || value === "") return "";
+  return "¥" + Number(value).toFixed(0);
+}
+
+function ratingLine(game) {
+  if (!game.rating) return "暂无评分";
+  const people = game.popularity ? ` · ${Math.round(game.popularity)} 人评` : "";
+  return `${Math.round(game.rating)}分${people}`;
+}
+
+function talk(game) {
+  return (game.links || [])
+    .map(
+      (link) =>
+        `<a class="talk-link" href="${link.url}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`
+    )
+    .join("");
+}
+
 function card(game, compact) {
-  const node = document.createElement("a");
+  const node = document.createElement(compact ? "a" : "article");
   node.className = compact ? "deal" : "card";
-  node.href = game.store_url || "#";
-  node.target = "_blank";
-  node.rel = "noreferrer";
-  const img = game.cover
-    ? `<img src="${game.cover}" alt="" />`
-    : compact
-      ? ""
-      : `<div class="cover"></div>`;
-  const sale = game.discount > 0 ? `<span class="sale">-${Math.round(game.discount)}%</span>` : "";
-  const price = money(game.price);
-  const was = game.discount > 0 ? `<span class="was">${money(game.original_price)}</span>` : "";
   if (compact) {
-    node.innerHTML = `${img || '<div class="cover" style="width:64px;height:64px"></div>'}
+    node.href = game.store_url || "#";
+    node.target = "_blank";
+    node.rel = "noreferrer";
+  }
+  const sale = game.discount > 0 ? `<span class="sale">-${Math.round(game.discount)}%</span>` : "";
+  const cny = moneyCny(game.price_cny);
+  const usd = money(game.price);
+  const was = game.discount > 0 ? `<span class="was">${moneyCny(game.original_price_cny)}</span>` : "";
+  if (compact) {
+    const img = game.cover
+      ? `<img src="${game.cover}" alt="" />`
+      : '<div class="cover" style="width:64px;height:64px"></div>';
+    node.innerHTML = `${img}
       <div>
         <strong>${escapeHtml(game.title)}</strong>
-        <div class="meta">${PLATFORM_LABELS[game.platform] || game.platform}</div>
-        <div class="price">${sale} ${price}</div>
+        <div class="meta">${PLATFORM_LABELS[game.platform] || game.platform} · ${ratingLine(game)}</div>
+        <div class="price">${sale} ${cny} <span class="fx">${usd}</span></div>
       </div>`;
     return node;
   }
   node.innerHTML = `
-    <div class="cover" style="${game.cover ? `background-image:url('${game.cover}')` : ""}"></div>
+    <a class="cover" href="${game.store_url || "#"}" target="_blank" rel="noreferrer" style="${game.cover ? `background-image:url('${game.cover}')` : ""}"></a>
     <div class="body">
-      <h3>${escapeHtml(game.title)}</h3>
-      <div class="meta">${PLATFORM_LABELS[game.platform] || game.platform} · ${(game.genres || []).map((g) => GENRE_LABELS[g] || g).join(" / ") || "未分类"}</div>
-      <div class="price">${sale} ${price}${was}</div>
+      <h3><a href="${game.store_url || "#"}" target="_blank" rel="noreferrer">${escapeHtml(game.title)}</a></h3>
+      <div class="meta">${PLATFORM_LABELS[game.platform] || game.platform} · ${ratingLine(game)}</div>
+      <div class="meta">${(game.genres || []).map((g) => GENRE_LABELS[g] || g).join(" / ") || "未分类"}</div>
+      <div class="price">${sale} ${cny} <span class="fx">${usd}</span>${was}</div>
+      <div class="talk">${talk(game)}</div>
     </div>`;
   return node;
 }
@@ -103,13 +126,18 @@ function escapeHtml(text) {
     .replaceAll(">", "&gt;");
 }
 
-function renderStatus(status) {
+function renderStatus(status, fx) {
   const node = $("status");
   node.innerHTML = "";
   for (const key of ["steam", "ps5", "switch"]) {
     const item = status[key] || {};
     const row = document.createElement("div");
     row.innerHTML = `<span class="dot ${item.ok ? "ok" : "bad"}"></span>${PLATFORM_LABELS[key]} ${item.ok ? "在刷新" : item.error ? "这轮失败" : "还没拉到"}`;
+    node.appendChild(row);
+  }
+  if (fx && (fx.USD || fx.EUR)) {
+    const row = document.createElement("div");
+    row.textContent = `汇率 USD ${Number(fx.USD || 0).toFixed(2)} · EUR ${Number(fx.EUR || 0).toFixed(2)}`;
     node.appendChild(row);
   }
 }
@@ -121,7 +149,7 @@ async function load() {
   if (state.players) params.set("players", state.players);
   if (state.genre) params.set("genre", state.genre);
   const payload = await fetch("/api/board?" + params.toString()).then((r) => r.json());
-  renderStatus(payload.status || {});
+  renderStatus(payload.status || {}, payload.fx || {});
   renderChips($("moods"), MOODS, state.mood, (value) => {
     state.mood = value;
     load();

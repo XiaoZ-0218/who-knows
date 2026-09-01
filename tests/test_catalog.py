@@ -16,6 +16,7 @@ def _game(**overrides):
         "original_price": 20.0,
         "discount": 50.0,
         "store_url": "https://example.com",
+        "currency": "USD",
         "mood": {"hot": 1.0, "new": 2.0, "sleeper": 3.0},
     }
     item.update(overrides)
@@ -75,4 +76,17 @@ def test_board_payload_includes_filtered_games_and_deals():
     assert [item["id"] for item in payload["deals"]] == ["keep"]
     assert payload["status"]["steam"]["ok"] is True
     assert "action" in payload["genres"]
+
+
+def test_board_payload_adds_cny_prices_and_discussion_links():
+    catalog = {
+        "games": [_game(id="steam:9", title="Hades", price=10.0, original_price=20.0)],
+        "fx": {"USD": 7.0, "EUR": 8.0},
+        "status": {},
+    }
+    payload = board_payload(catalog)
+    game = payload["games"][0]
+    assert game["price_cny"] == 70.0
+    assert game["original_price_cny"] == 140.0
+    assert {item["id"] for item in game["links"]} >= {"steam-reviews", "bilibili", "douban"}
 
