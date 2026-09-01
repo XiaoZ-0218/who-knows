@@ -8,5 +8,6 @@ __pycache__/
 .pytest_cache/
 data/
 .env
+docker-compose.override.yml
 dist/
 *.egg-info/

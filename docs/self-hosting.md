@@ -42,6 +42,18 @@ uv run python serve.py
 
 `GET /api/refresh` 会立刻向商店拉一轮。若看板暴露在公网，请在反代层限制该路径，或关掉它。
 
+## Push 后立刻部署
+
+设置 `GITHUB_WEBHOOK_SECRET` 后，GitHub 可对 `POST /api/deploy` 发 push webhook（只处理 `main`）。服务校验 `X-Hub-Signature-256`，通过后在后台跑 `deploy/update.sh`。
+
+这需要容器能操作宿主机的 git 目录和 Docker：
+
+- 挂载 `/var/run/docker.sock`
+- 把仓库目录按**相同路径**挂进容器
+- 设置 `WHO_KNOWS_HOST_REPO` 为该路径
+
+这些挂载放在本机的 `docker-compose.override.yml`（不要提交）。未配置密钥时该接口返回 404。
+
 ## 端口被占用
 
 把 `WHO_KNOWS_PORT` 和 compose 的宿主机端口一起改掉。容器内仍监听 `WHO_KNOWS_PORT`。

@@ -9,6 +9,7 @@ import time
 from who_knows.apple import fetch_apple
 from who_knows.cache import read_catalog, write_catalog
 from who_knows.catalog import board_payload
+from who_knows.deployhook import handle_deploy
 from who_knows.epic import fetch_epic
 from who_knows.fx import fetch_fx
 from who_knows.gog import fetch_gog
@@ -88,9 +89,19 @@ def make_handler(board: Board):
                 return
             self._static(parsed.path)
 
-        def _json(self, payload):
+        def do_POST(self):
+            parsed = urlparse(self.path)
+            if parsed.path != "/api/deploy":
+                self.send_error(404)
+                return
+            length = int(self.headers.get("Content-Length") or 0)
+            body = self.rfile.read(length) if length else b""
+            status, payload = handle_deploy(self.headers, body)
+            self._json(payload, status=status)
+
+        def _json(self, payload, status=200):
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-            self.send_response(200)
+            self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(len(body)))

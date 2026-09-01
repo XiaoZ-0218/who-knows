@@ -14,6 +14,10 @@ services:
       https_proxy: ${HTTPS_PROXY:-}
       NO_PROXY: localhost,127.0.0.1
       no_proxy: localhost,127.0.0.1
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      WHO_KNOWS_HOST_REPO: ${WHO_KNOWS_HOST_REPO:-}
+      GITEA_TOKEN: ${GITEA_TOKEN:-}
+      GITEA_MIRROR_URL: ${GITEA_MIRROR_URL:-}
     volumes:
       - board-data:/data
     restart: unless-stopped
