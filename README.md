@@ -21,9 +21,31 @@ uv run pytest
 
 ## NAS
 
+仓库公开后，NAS 克隆 `main`，用 Docker 跑，cloudflared 把 `game.zxclaw.top` 指到本机 `8765`。
+
 ```
+sudo apt-get install -y git
+sudo mkdir -p /volume1/docker/who-knows
+sudo chown "$USER":"$USER" /volume1/docker/who-knows
+git clone https://github.com/XiaoZ-0218/who-knows.git /volume1/docker/who-knows
+cd /volume1/docker/who-knows
 docker compose up -d --build
 ```
+
+每 10 分钟对照 `origin/main`，有新提交才重建：
+
+```
+crontab -e
+```
+
+```
+*/10 * * * * /volume1/docker/who-knows/deploy/update.sh >> /volume1/docker/who-knows/update.log 2>&1
+```
+
+现有 NAS 上的 `cloudflared` 是 host 网络。在 Cloudflare Zero Trust 里给同一条 tunnel 加 Public Hostname：
+
+- 域名：`game.zxclaw.top`
+- 服务：`http://127.0.0.1:8765`
 
 环境变量：
 

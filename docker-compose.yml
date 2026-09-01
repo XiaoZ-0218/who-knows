@@ -1,10 +1,12 @@
 services:
   board:
     build: .
+    container_name: who-knows
     ports:
       - "8765:8765"
     environment:
       WHO_KNOWS_DATA: /data/catalog.json
+      WHO_KNOWS_PORT: "8765"
       WHO_KNOWS_REFRESH: "1800"
     volumes:
       - board-data:/data
