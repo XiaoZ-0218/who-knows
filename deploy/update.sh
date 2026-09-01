@@ -11,8 +11,8 @@ git_do() {
   if command -v git >/dev/null 2>&1; then
     git "$@"
   else
-    $DOCKER run --rm -v "$DIR":/git -w /git alpine:3.20 \
-      sh -c 'apk add --no-cache git >/dev/null && git "$@"' git "$@"
+    $DOCKER run --rm --network host -v "$DIR":/git -w /git alpine:3.20 \
+      sh -c 'apk add --no-cache git >/dev/null && git config --global --add safe.directory /git && git "$@"' git "$@"
   fi
 }
 git_do fetch origin main
