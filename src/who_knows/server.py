@@ -104,6 +104,7 @@ def make_handler(board: Board):
                 ".html": "text/html; charset=utf-8",
                 ".css": "text/css; charset=utf-8",
                 ".js": "text/javascript; charset=utf-8",
+                ".svg": "image/svg+xml",
             }
             self.send_response(200)
             self.send_header("Content-Type", types.get(target.suffix, "application/octet-stream"))

@@ -1,5 +1,9 @@
 # Who Knows
 
+<p>
+  <img src="web/logo.svg" width="72" height="72" alt="Who Knows" />
+</p>
+
 今晚玩什么。一块会自己刷新的游戏推荐看板。
 
 按口味、平台、人数和分类，从 Steam / PlayStation 5 / Nintendo Switch 的在售目录里挑今晚的游戏。特价不是另一套数据，只是同一批货里正在打折的。
