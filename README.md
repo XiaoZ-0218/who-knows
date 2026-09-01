@@ -42,10 +42,10 @@ crontab -e
 */10 * * * * /volume1/docker/who-knows/deploy/update.sh >> /volume1/docker/who-knows/update.log 2>&1
 ```
 
-现有 NAS 上的 `cloudflared` 是 host 网络。在 Cloudflare Zero Trust 里给同一条 tunnel 加 Public Hostname：
+现有 NAS 上的 `cloudflared` 是 host 网络。看板映射在 **18765**（8765 被 UGOS 占用）。在 Cloudflare Zero Trust 里给同一条 tunnel 加 Public Hostname：
 
 - 域名：`game.zxclaw.top`
-- 服务：`http://127.0.0.1:8765`
+- 服务：`http://127.0.0.1:18765`
 
 环境变量：
 
