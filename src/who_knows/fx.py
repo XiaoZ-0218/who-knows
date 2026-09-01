@@ -6,6 +6,8 @@ FRANKFURTER = "https://api.frankfurter.app/latest"
 def to_cny(price: float | None, currency: str, fx: dict) -> float | None:
     if price is None:
         return None
+    if currency == "CNY":
+        return round(float(price), 2)
     rate = fx.get(currency)
     if not rate:
         return None
@@ -18,4 +20,5 @@ def fetch_fx(load_json=get_json) -> dict:
     return {
         "USD": float((usd.get("rates") or {})["CNY"]),
         "EUR": float((eur.get("rates") or {})["CNY"]),
+        "CNY": 1.0,
     }

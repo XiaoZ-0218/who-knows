@@ -6,9 +6,12 @@ import os
 import threading
 import time
 
+from who_knows.apple import fetch_apple
 from who_knows.cache import read_catalog, write_catalog
 from who_knows.catalog import board_payload
+from who_knows.epic import fetch_epic
 from who_knows.fx import fetch_fx
+from who_knows.gog import fetch_gog
 from who_knows.nintendo import fetch_nintendo
 from who_knows.playstation import fetch_playstation
 from who_knows.refresh import refresh_catalog
@@ -26,6 +29,10 @@ def default_fetchers() -> dict:
         "steam": fetch_steam,
         "ps5": fetch_playstation,
         "switch": fetch_nintendo,
+        "apple-cn": lambda: fetch_apple("cn", "apple-cn"),
+        "apple-us": lambda: fetch_apple("us", "apple-us"),
+        "epic": fetch_epic,
+        "gog": fetch_gog,
     }
 
 

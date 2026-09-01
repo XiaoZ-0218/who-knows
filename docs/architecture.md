@@ -20,7 +20,7 @@ Steam / PS Store / eShop
 
 | 模块 | 职责 |
 | --- | --- |
-| `steam.py` / `playstation.py` / `nintendo.py` | 拉各自公开目录，输出统一 `Game` |
+| `steam.py` / `playstation.py` / `nintendo.py` / `apple.py` / `epic.py` / `gog.py` | 拉各自公开目录，输出统一 `Game` |
 | `normalize.py` | 人数、分类、口味分数、卡片字段 |
 | `catalog.py` | 按平台合并、筛选、人民币与讨论链接 |
 | `refresh.py` | 一家失败不影响另外两家的旧缓存 |

@@ -16,6 +16,10 @@ const PLATFORMS = [
   ["steam", "Steam"],
   ["ps5", "PS5"],
   ["switch", "Switch"],
+  ["apple-cn", "App Store 国区"],
+  ["apple-us", "App Store 外区"],
+  ["epic", "Epic"],
+  ["gog", "GOG"],
 ];
 
 const PLAYERS = [
@@ -41,7 +45,15 @@ const GENRE_LABELS = {
   music: "音乐",
 };
 
-const PLATFORM_LABELS = { steam: "Steam", ps5: "PS5", switch: "Switch" };
+const PLATFORM_LABELS = {
+  steam: "Steam",
+  ps5: "PS5",
+  switch: "Switch",
+  "apple-cn": "App Store 国区",
+  "apple-us": "App Store 外区",
+  epic: "Epic",
+  gog: "GOG",
+};
 
 function $(id) {
   return document.getElementById(id);
@@ -58,9 +70,12 @@ function renderChips(node, items, current, onPick) {
   }
 }
 
-function money(value) {
+function formatPrice(value, currency) {
   if (value === null || value === undefined || value === "") return "";
-  return "$" + Number(value).toFixed(2);
+  const amount = Number(value);
+  if (currency === "CNY") return "¥" + amount.toFixed(0);
+  if (currency === "EUR") return "€" + amount.toFixed(2);
+  return "$" + amount.toFixed(2);
 }
 
 function moneyCny(value) {
@@ -93,7 +108,7 @@ function card(game, compact) {
   }
   const sale = game.discount > 0 ? `<span class="sale">-${Math.round(game.discount)}%</span>` : "";
   const cny = moneyCny(game.price_cny);
-  const usd = money(game.price);
+  const original = formatPrice(game.price, game.currency);
   const was = game.discount > 0 ? `<span class="was">${moneyCny(game.original_price_cny)}</span>` : "";
   if (compact) {
     const img = game.cover
@@ -103,7 +118,7 @@ function card(game, compact) {
       <div>
         <strong>${escapeHtml(game.title)}</strong>
         <div class="meta">${PLATFORM_LABELS[game.platform] || game.platform} · ${ratingLine(game)}</div>
-        <div class="price">${sale} ${cny} <span class="fx">${usd}</span></div>
+        <div class="price">${sale} ${cny} <span class="fx">${original}</span></div>
       </div>`;
     return node;
   }
@@ -113,7 +128,7 @@ function card(game, compact) {
       <h3><a href="${game.store_url || "#"}" target="_blank" rel="noreferrer">${escapeHtml(game.title)}</a></h3>
       <div class="meta">${PLATFORM_LABELS[game.platform] || game.platform} · ${ratingLine(game)}</div>
       <div class="meta">${(game.genres || []).map((g) => GENRE_LABELS[g] || g).join(" / ") || "未分类"}</div>
-      <div class="price">${sale} ${cny} <span class="fx">${usd}</span>${was}</div>
+      <div class="price">${sale} ${cny} <span class="fx">${original}</span>${was}</div>
       <div class="talk">${talk(game)}</div>
     </div>`;
   return node;
@@ -129,10 +144,15 @@ function escapeHtml(text) {
 function renderStatus(status, fx) {
   const node = $("status");
   node.innerHTML = "";
-  for (const key of ["steam", "ps5", "switch"]) {
+  const order = ["steam", "ps5", "switch", "apple-cn", "apple-us", "epic", "gog"];
+  const keys = [
+    ...order.filter((key) => key in status),
+    ...Object.keys(status).filter((key) => !order.includes(key)),
+  ];
+  for (const key of keys) {
     const item = status[key] || {};
     const row = document.createElement("div");
-    row.innerHTML = `<span class="dot ${item.ok ? "ok" : "bad"}"></span>${PLATFORM_LABELS[key]} ${item.ok ? "在刷新" : item.error ? "这轮失败" : "还没拉到"}`;
+    row.innerHTML = `<span class="dot ${item.ok ? "ok" : "bad"}"></span>${PLATFORM_LABELS[key] || key} ${item.ok ? "在刷新" : item.error ? "这轮失败" : "还没拉到"}`;
     node.appendChild(row);
   }
   if (fx && (fx.USD || fx.EUR)) {

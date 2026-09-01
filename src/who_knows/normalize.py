@@ -64,6 +64,21 @@ GENRE_ALIASES = {
     "fighting": "fighting",
     "music": "music",
     "rhythm": "music",
+    "休闲": "puzzle",
+    "益智": "puzzle",
+    "益智解谜": "puzzle",
+    "冒险": "adventure",
+    "动作": "action",
+    "角色扮演": "rpg",
+    "射击": "shooter",
+    "策略": "strategy",
+    "模拟": "simulation",
+    "格斗": "fighting",
+    "音乐": "music",
+    "竞速": "racing",
+    "体育": "sports",
+    "独立": "indie",
+    "恐怖": "horror",
 }
 
 

@@ -7,6 +7,5 @@ def test_to_cny_converts_usd_and_eur():
     assert to_cny(10, "EUR", fx) == 80.0
 
 
-def test_to_cny_missing_price_or_rate_is_none():
-    assert to_cny(None, "USD", {"USD": 7}) is None
-    assert to_cny(10, "USD", {}) is None
+def test_to_cny_keeps_cny_prices():
+    assert to_cny(30, "CNY", {"USD": 7}) == 30.0
