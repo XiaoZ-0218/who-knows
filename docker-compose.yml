@@ -1,0 +1,14 @@
+services:
+  board:
+    build: .
+    ports:
+      - "8765:8765"
+    environment:
+      WHO_KNOWS_DATA: /data/catalog.json
+      WHO_KNOWS_REFRESH: "1800"
+    volumes:
+      - board-data:/data
+    restart: unless-stopped
+
+volumes:
+  board-data:

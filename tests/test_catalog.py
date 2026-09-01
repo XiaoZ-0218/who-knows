@@ -1,4 +1,4 @@
-from who_knows.catalog import deals, filter_games, merge_platform
+from who_knows.catalog import board_payload, deals, filter_games, merge_platform
 
 
 def _game(**overrides):
@@ -60,3 +60,19 @@ def test_deals_are_discounted_and_sorted():
     ]
     found = deals(games)
     assert [item["id"] for item in found] == ["big", "small"]
+
+
+def test_board_payload_includes_filtered_games_and_deals():
+    catalog = {
+        "games": [
+            _game(id="keep", platform="steam", discount=40, mood={"hot": 2, "new": 1, "sleeper": 1}),
+            _game(id="other", platform="ps5", discount=80, mood={"hot": 9, "new": 1, "sleeper": 1}),
+        ],
+        "status": {"steam": {"ok": True}},
+    }
+    payload = board_payload(catalog, platform="steam", mood="hot")
+    assert [item["id"] for item in payload["games"]] == ["keep"]
+    assert [item["id"] for item in payload["deals"]] == ["keep"]
+    assert payload["status"]["steam"]["ok"] is True
+    assert "action" in payload["genres"]
+

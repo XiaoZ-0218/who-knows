@@ -1,0 +1,232 @@
+:root {
+  --bg: #14110d;
+  --paper: #1e1913;
+  --ink: #f3e6d0;
+  --muted: #b7a48a;
+  --line: #3a3126;
+  --amber: #e2a23a;
+  --sale: #d45a3c;
+  --ok: #8fbf6a;
+  --bad: #d46a6a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(1200px 600px at 10% -10%, #2a2218, var(--bg));
+  color: var(--ink);
+  font-family: "Songti SC", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+}
+
+.noise {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' /%3E%3C/filter%3E%3Crect width='80' height='80' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+.top,
+.deals,
+.filters,
+main {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  padding: 28px 0 10px;
+  gap: 16px;
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.18em;
+  text-transform: lowercase;
+  color: var(--amber);
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+  font-size: 12px;
+}
+
+h1 {
+  margin: 4px 0 0;
+  font-size: 42px;
+  font-weight: 600;
+}
+
+.status {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot.ok {
+  background: var(--ok);
+}
+
+.dot.bad {
+  background: var(--bad);
+}
+
+.deals {
+  margin-top: 12px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--paper) 88%, black);
+  border: 1px solid var(--line);
+}
+
+.deals-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.deals-head h2,
+.deals-head p {
+  margin: 0;
+}
+
+.deals-head p,
+.count {
+  color: var(--muted);
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+  font-size: 13px;
+}
+
+.deal-rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-top: 14px;
+}
+
+.deal {
+  min-width: 210px;
+  display: flex;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  background: #16120e;
+  border: 1px solid var(--line);
+  padding: 8px;
+}
+
+.deal img,
+.card img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  background: #2b241c;
+}
+
+.sale {
+  color: var(--sale);
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+  font-size: 12px;
+}
+
+.filters {
+  display: grid;
+  gap: 10px;
+  padding: 18px 0 8px;
+}
+
+.moods,
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+button.active {
+  background: var(--amber);
+  color: #1a140c;
+  border-color: var(--amber);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  padding-bottom: 60px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  min-height: 280px;
+}
+
+.cover {
+  height: 140px;
+  background: #2b241c center/cover no-repeat;
+}
+
+.card .body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.meta {
+  color: var(--muted);
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+  font-size: 12px;
+}
+
+.price {
+  margin-top: auto;
+  font-family: ui-sans-serif, "PingFang SC", sans-serif;
+}
+
+.was {
+  text-decoration: line-through;
+  color: var(--muted);
+  margin-left: 8px;
+}
+
+.empty {
+  color: var(--muted);
+  padding: 40px 0 80px;
+}

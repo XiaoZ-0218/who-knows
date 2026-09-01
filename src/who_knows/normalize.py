@@ -102,3 +102,68 @@ def _age_days(released_at: str, now: datetime) -> float:
     if released.tzinfo is None:
         released = released.replace(tzinfo=timezone.utc)
     return max((now - released).total_seconds() / 86400.0, 0.0)
+
+
+def make_game(
+    *,
+    platform: str,
+    store_id: str,
+    title: str,
+    cover: str = "",
+    genres: list[str] | None = None,
+    player_tags: list[str] | None = None,
+    released_at: str = "",
+    rating: float = 0.0,
+    popularity: float = 0.0,
+    price: float | None = None,
+    original_price: float | None = None,
+    discount: float | None = None,
+    store_url: str = "",
+    fetched_at: str = "",
+    now: datetime | None = None,
+) -> dict:
+    iso_date = to_iso_date(released_at)
+    if discount is None:
+        discount = 0.0
+        if price is not None and original_price and original_price > 0 and price < original_price:
+            discount = round((1.0 - price / original_price) * 100.0, 1)
+    return {
+        "id": f"{platform}:{store_id}",
+        "title": title,
+        "cover": cover,
+        "platform": platform,
+        "genres": map_genres(genres or []),
+        "players": classify_players(player_tags or []),
+        "released_at": iso_date,
+        "rating": float(rating or 0),
+        "popularity": float(popularity or 0),
+        "price": price,
+        "original_price": original_price,
+        "discount": float(discount or 0),
+        "store_url": store_url,
+        "fetched_at": fetched_at,
+        "mood": mood_scores(float(rating or 0), float(popularity or 0), iso_date, now=now),
+    }
+
+
+def to_iso_date(value: str) -> str:
+    if not value:
+        return ""
+    value = value.strip()
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return parsed.date().isoformat()
+    except ValueError:
+        pass
+    for fmt in ("%d %b, %Y", "%b %d, %Y", "%d/%m/%Y", "%m/%d/%Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(value[: len("10 Dec, 2020")], fmt).date().isoformat()
+        except ValueError:
+            continue
+    # pretty_date_s is often dd/mm/yyyy; try full string
+    for fmt in ("%d/%m/%Y", "%m/%d/%Y", "%d %b, %Y", "%b %d, %Y"):
+        try:
+            return datetime.strptime(value, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return ""

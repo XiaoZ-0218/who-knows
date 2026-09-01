@@ -26,3 +26,26 @@ def filter_games(
 def deals(games: list[dict]) -> list[dict]:
     discounted = [item for item in games if (item.get("discount") or 0) > 0]
     return sorted(discounted, key=lambda item: item.get("discount") or 0, reverse=True)
+
+
+def board_payload(
+    catalog: dict,
+    platform: str | None = None,
+    genre: str | None = None,
+    players: str | None = None,
+    mood: str = "hot",
+) -> dict:
+    platform = platform or None
+    genre = genre or None
+    players = players or None
+    mood = mood or "hot"
+    games = catalog.get("games") or []
+    filtered = filter_games(games, platform=platform, genre=genre, players=players, mood=mood)
+    deal_pool = filter_games(games, platform=platform, genre=genre, players=players, mood="hot")
+    genres = sorted({g for item in games for g in item.get("genres") or []})
+    return {
+        "games": filtered,
+        "deals": deals(deal_pool)[:12],
+        "status": catalog.get("status") or {},
+        "genres": genres,
+    }
